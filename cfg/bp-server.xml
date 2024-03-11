@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<relay>
+
+    <log>
+        <path>log</path>
+        <prefix>relay</prefix>
+        <level>info</level>
+        <maxsize>10</maxsize>
+        <maxage>30</maxage>
+    </log>
+
+    <net>
+        <view_ip>0.0.0.0</view_ip>
+        <view_port>17000</view_port>
+        <upload_ip>0.0.0.0</upload_ip>
+        <upload_port>17001</upload_port>
+    </net>
+
+</relay>
