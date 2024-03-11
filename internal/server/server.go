@@ -34,7 +34,6 @@ import (
 	"bp-server/internal/conf"
 	"context"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -44,44 +43,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type responseStruct struct {
-	Status  int         `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
-}
-
-type sessionInfo struct {
-	ReqIP     string `json:"req_ip"`
-	ReqPort   uint16 `json:"req_port"`
-	RespIP    string `json:"resp_ip"`
-	RespPort  uint16 `json:"resp_port"`
-	ReqToResp uint32 `json:"req_to_resp"`
-	RespToReq uint32 `json:"resp_to_req"`
-	StartTime int64  `json:"start"`
-}
-
-type statSessionData struct {
-	Sessions []sessionInfo `json:"sessions"`
-}
-
-type userInfo struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type userListData struct {
-	Users []userInfo `json:"users"`
-}
-
 type Server struct {
 	router     *gin.Engine
 	stopedChan chan struct{}
 	httpView   *http.Server
 	httpUpload *http.Server
-}
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
 }
 
 func toGinMode(mode string) string {
