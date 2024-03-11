@@ -31,7 +31,9 @@
 package server
 
 import (
+	"bp-server/internal/breakpad"
 	"bp-server/internal/conf"
+	"bp-server/internal/db"
 	"context"
 	"fmt"
 	"net/http"
@@ -123,7 +125,14 @@ func (svr *Server) list(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "Parse GET parameter 'page' as integer failed")
 		return
 	}
-	ctx.String(http.StatusOK, "Success ", page)
+	dumps, err := db.QueryDumpList(page)
+	if err != nil {
+		logrus.Error("QueryDumpList failed ", err)
+		ctx.String(http.StatusOK, "Query dump list internal error")
+		return
+	}
+	//TODO: render dumps to html
+	ctx.String(http.StatusOK, "Success ", dumps)
 }
 
 func (svr *Server) view(ctx *gin.Context) {
@@ -133,7 +142,13 @@ func (svr *Server) view(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "GET parameter 'id' is empty")
 		return
 	}
-	ctx.String(http.StatusOK, "Success ", id)
+	frames, err := breakpad.WalkStack(id)
+	if err != nil {
+		ctx.String(http.StatusOK, "Get crash info failed")
+		return
+	}
+	//TODO: render frames to html
+	ctx.String(http.StatusOK, "Success ", frames)
 }
 
 func (svr *Server) upload(ctx *gin.Context) {

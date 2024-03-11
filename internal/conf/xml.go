@@ -50,6 +50,10 @@ const defaultXmlConfig = `
         <maxage>30</maxage>
     </log>
 
+    <db>./dumps.db</db>
+    <dump>./dumps/</dump>
+    <symbol>./symbols</symbol>
+
     <net>
         <mode>release</mode>
         <view_ip>0.0.0.0</view_ip>
@@ -64,8 +68,11 @@ const defaultXmlConfig = `
 var Xml relayConf
 
 type relayConf struct {
-	Log logConf `xml:"log"`
-	Net netConf `xml:"net"`
+	Log        logConf `xml:"log"`
+	Net        netConf `xml:"net"`
+	DB         string  `xml:"db"`
+	DumpPath   string  `xml:"dump"`
+	SymbolPath string  `xml:"symbol"`
 }
 
 type logConf struct {

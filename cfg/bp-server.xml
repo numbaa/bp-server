@@ -9,6 +9,10 @@
         <maxage>30</maxage>
     </log>
 
+    <db>./dumps.db</db>
+    <dump>./dumps/</dump>
+    <symbol>./symbols</symbol>
+
     <net>
         <view_ip>0.0.0.0</view_ip>
         <view_port>17000</view_port>
