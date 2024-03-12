@@ -58,7 +58,7 @@ const listTemplate = `
 		<ul>
 		{{range . }}
 			<li>
-			{{ .Program }} {{ .Version }} Build: {{ .Build }} Crash: {{ .CreatedAt }} <a href="/view/ {{- .ID -}} "> {{ .Filename }} </a>
+			{{ .Program }} {{ .Version }} Build: {{ .Build }} Crash: {{ .CreatedAt }} <a href="%s/view/ {{- .ID -}} "> {{ .Filename }} </a>
 			</li>
 		{{end}}
 		</ul>
@@ -85,7 +85,8 @@ func toGinMode(mode string) string {
 
 func New() *Server {
 	gin.SetMode(toGinMode(conf.Xml.Net.Mode))
-	tpl, err := template.New("list").Parse(listTemplate)
+	template2 := fmt.Sprintf(listTemplate, conf.Xml.Net.Prefix)
+	tpl, err := template.New("list").Parse(template2)
 	if err != nil {
 		panic(err)
 	}

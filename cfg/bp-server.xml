@@ -16,6 +16,7 @@
 
     <net>
         <mode>release</mode>
+        <prefix></prefix>
         <view_ip>0.0.0.0</view_ip>
         <view_port>17000</view_port>
         <upload_ip>0.0.0.0</upload_ip>

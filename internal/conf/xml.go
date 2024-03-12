@@ -57,6 +57,7 @@ const defaultXmlConfig = `
 
     <net>
         <mode>release</mode>
+        <prefix></prefix>
         <view_ip>0.0.0.0</view_ip>
         <view_port>17000</view_port>
         <upload_ip>0.0.0.0</upload_ip>
@@ -87,6 +88,7 @@ type logConf struct {
 
 type netConf struct {
 	Mode       string `xml:"mode"`
+	Prefix     string `xml:"prefix"`
 	ViewPort   uint16 `xml:"view_port"`
 	ViewIP     string `xml:"view_ip"`
 	UploadPort uint16 `xml:"upload_port"`
