@@ -28,3 +28,6 @@ go.work
 /log
 /bp-server
 *.exe
+dumps.db
+/symbols
+/dumps

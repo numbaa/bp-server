@@ -58,7 +58,7 @@ const listTemplate = `
 		<ul>
 		{{range . }}
 			<li>
-				<a href="/view/ {{- .ID -}} "> {{ .Program }} {{ .Version }} Build: {{ .Build }} Crash: {{ .CreatedAt }} </a>
+			{{ .Program }} {{ .Version }} Build: {{ .Build }} Crash: {{ .CreatedAt }} <a href="/view/ {{- .ID -}} "> {{ .Filename }} </a>
 			</li>
 		{{end}}
 		</ul>
@@ -178,7 +178,7 @@ func (svr *Server) view(ctx *gin.Context) {
 }
 
 func (svr *Server) uploadDump(ctx *gin.Context) {
-	buildTime := ctx.PostForm("build_time")
+	buildTime := ctx.PostForm("build")
 	programName := ctx.PostForm("program")
 	version := ctx.PostForm("version")
 	if buildTime == "" || programName == "" || version == "" {

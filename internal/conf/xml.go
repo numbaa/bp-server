@@ -37,14 +37,14 @@ import (
 	"os"
 )
 
-const defaultXmlPath = "/path/to/bp-server.xml"
+const defaultXmlPath = "bp-server.xml"
 const defaultXmlConfig = `
 <?xml version="1.0" encoding="UTF-8" ?>
 <bp-server>
 
     <log>
         <path>log</path>
-        <prefix>relay</prefix>
+        <prefix>bp-server</prefix>
         <level>info</level>
         <maxsize>10</maxsize>
         <maxage>30</maxage>
