@@ -15,6 +15,7 @@
     <exe>minidump_stackwalk</exe>
 
     <net>
+        <mode>release</mode>
         <view_ip>0.0.0.0</view_ip>
         <view_port>17000</view_port>
         <upload_ip>0.0.0.0</upload_ip>

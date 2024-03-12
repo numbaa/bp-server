@@ -163,13 +163,24 @@ func (svr *Server) list(ctx *gin.Context) {
 }
 
 func (svr *Server) view(ctx *gin.Context) {
-	id := ctx.Param("id")
-	if id == "" {
-		logrus.Warnf("/view/:id: GET parameter 'id' is empty")
-		ctx.String(http.StatusOK, "GET parameter 'id' is empty")
+	id, err := strconv.Atoi(ctx.Param("id"))
+	if err != nil {
+		logrus.Warnf("/view/:id: parse 'id' failed: %v", err)
+		ctx.String(http.StatusOK, "Parse GET parameter 'id' as integer failed")
 		return
 	}
-	content, err := breakpad.WalkStack(id)
+	if id < 0 {
+		id = 0
+	}
+	dump, err := db.QueryDump(uint(id))
+	if err != nil {
+		msg := fmt.Sprintf("Query dump with id '%d' failed", id)
+		logrus.Warn(msg)
+		ctx.String(http.StatusOK, msg)
+		return
+	}
+	fullpath := path.Join(conf.Xml.DumpPath, dump.Program, dump.Version, dump.Filename)
+	content, err := breakpad.WalkStack(fullpath)
 	if err != nil {
 		ctx.String(http.StatusOK, "Get crash info failed")
 		return

@@ -87,3 +87,14 @@ func AddDump(program string, version string, filename string, buildTime string) 
 	}
 	return nil
 }
+
+func QueryDump(id uint) (*Dump, error) {
+	dump := Dump{}
+	dump.ID = id
+	result := dbConn.First(&dump)
+	if result.Error != nil {
+		logrus.Errorf("Select table 'dumps' with {id:'%d'} failed with: %v", id, result.Error)
+		return nil, result.Error
+	}
+	return &dump, nil
+}
