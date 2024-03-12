@@ -36,7 +36,9 @@ import (
 	"bp-server/internal/db"
 	"context"
 	"fmt"
+	"html/template"
 	"net/http"
+	"path"
 	"strconv"
 	"strings"
 	"time"
@@ -45,7 +47,26 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const listTemplate = `
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Dumps</title>
+	</head>
+	<body>
+		<ul>
+		{{range . }}
+			<li>
+				<a href="/view/ {{- .ID -}} "> {{ .Program }} {{ .Version }} Build: {{ .Build }} Crash: {{ .CreatedAt }} </a>
+			</li>
+		{{end}}
+		</ul>
+	</body>
+</html>`
+
 type Server struct {
+	tpl        *template.Template
 	router     *gin.Engine
 	stopedChan chan struct{}
 	httpView   *http.Server
@@ -64,7 +85,12 @@ func toGinMode(mode string) string {
 
 func New() *Server {
 	gin.SetMode(toGinMode(conf.Xml.Net.Mode))
+	tpl, err := template.New("list").Parse(listTemplate)
+	if err != nil {
+		panic(err)
+	}
 	return &Server{
+		tpl:        tpl,
 		router:     gin.Default(),
 		stopedChan: make(chan struct{}, 2),
 	}
@@ -73,7 +99,8 @@ func New() *Server {
 func (svr *Server) Start() {
 	svr.router.GET("/list/:page", svr.list)
 	svr.router.GET("/view/:id", svr.view)
-	svr.router.POST("/upload", svr.upload)
+	svr.router.POST("/updump", svr.uploadDump)
+	svr.router.POST("/upsym", svr.uploadSymbol)
 	svr.httpUpload = &http.Server{
 		Addr:    conf.Xml.Net.UploadIP + ":" + fmt.Sprint(conf.Xml.Net.UploadPort),
 		Handler: svr.router,
@@ -131,8 +158,8 @@ func (svr *Server) list(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "Query dump list internal error")
 		return
 	}
-	//TODO: render dumps to html
-	ctx.String(http.StatusOK, "Success ", dumps)
+	ctx.Status(http.StatusOK)
+	svr.tpl.Execute(ctx.Writer, dumps)
 }
 
 func (svr *Server) view(ctx *gin.Context) {
@@ -142,25 +169,68 @@ func (svr *Server) view(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "GET parameter 'id' is empty")
 		return
 	}
-	frames, err := breakpad.WalkStack(id)
+	content, err := breakpad.WalkStack(id)
 	if err != nil {
 		ctx.String(http.StatusOK, "Get crash info failed")
 		return
 	}
-	//TODO: render frames to html
-	ctx.String(http.StatusOK, "Success ", frames)
+	ctx.String(http.StatusOK, content)
 }
 
-func (svr *Server) upload(ctx *gin.Context) {
+func (svr *Server) uploadDump(ctx *gin.Context) {
+	buildTime := ctx.PostForm("build_time")
+	programName := ctx.PostForm("program")
+	version := ctx.PostForm("version")
+	if buildTime == "" || programName == "" || version == "" {
+		logrus.Warn("Upload dump failed: invalid parameters")
+		ctx.String(http.StatusOK, "Upload dump failed: invalid parameters")
+		return
+	}
 	file, err := ctx.FormFile("file")
 	if err != nil {
-		msg := fmt.Sprintf("Upload file failed: %v", err)
+		msg := fmt.Sprintf("Upload dump failed: %v", err)
 		logrus.Warn(msg)
 		ctx.String(http.StatusOK, msg)
-	} else {
-		msg := fmt.Sprintf("Upload file: %s, size: %d", file.Filename, file.Size)
-		logrus.Print(msg)
-		//ctx.SaveUploadedFile(file, "/path/to/minidump")
+		return
+	}
+	fullpath := path.Join(conf.Xml.DumpPath, programName, version, file.Filename)
+	err = ctx.SaveUploadedFile(file, fullpath)
+	if err != nil {
+		logrus.Warnf("Save dump file to disk failed: %v", err)
+		ctx.String(http.StatusOK, "Save dump file to disk failed")
+		return
+	}
+	err = db.AddDump(programName, version, file.Filename, buildTime)
+	if err != nil {
+		ctx.String(http.StatusOK, "Add meta info to database failed")
+		return
+	}
+	logrus.Printf("Upload dump: %s, size: %d, program:%s, version:%s, build time:%s", file.Filename, file.Size, programName, version, buildTime)
+	ctx.String(http.StatusOK, "Success")
+}
+
+func (svr *Server) uploadSymbol(ctx *gin.Context) {
+	entry := ctx.PostForm("entry")
+	id := ctx.PostForm("id")
+	if entry == "" || id == "" {
+		logrus.Errorf("Upload symbol file failed: invalid parameters")
+		ctx.String(http.StatusOK, "Upload file symbol failed: invalid parameters")
+		return
+	}
+	file, err := ctx.FormFile("file")
+	if err != nil {
+		msg := fmt.Sprintf("Upload symbol file failed: %v", err)
+		logrus.Errorf(msg)
 		ctx.String(http.StatusOK, msg)
+		return
+	}
+	fullpath := path.Join(conf.Xml.SymbolPath, entry, id, file.Filename)
+	err = ctx.SaveUploadedFile(file, fullpath)
+	if err != nil {
+		logrus.Errorf("Save uploaded symbol file '%s' to '%s' failed with: %v", file.Filename, fullpath, err)
+		ctx.String(http.StatusOK, "Save file failed")
+	} else {
+		logrus.Infof("Saved uploaded symbol file '%s' to '%s'", file.Filename, fullpath)
+		ctx.String(http.StatusOK, "Success")
 	}
 }

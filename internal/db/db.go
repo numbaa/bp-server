@@ -35,6 +35,7 @@ import (
 	"fmt"
 
 	"github.com/glebarez/sqlite"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -42,8 +43,10 @@ var dbConn *gorm.DB
 
 type Dump struct {
 	gorm.Model
+	Program  string
+	Version  string
 	Filename string
-	Fullpath string
+	Build    string
 }
 
 func init() {
@@ -56,9 +59,31 @@ func init() {
 }
 
 func QueryDumpList(page int) ([]Dump, error) {
-	return []Dump{}, nil
+	const kLimit int = 20
+	index := kLimit * (page - 1)
+	if index < 0 {
+		index = 0
+	}
+	var dumps []Dump
+	result := dbConn.Limit(kLimit).Offset(index).Find(&dumps)
+	if result.Error != nil {
+		logrus.Errorf("Query table 'dumps' with limit(%d) offset(%d) failed with: %v", kLimit, index, result.Error)
+		return nil, result.Error
+	}
+	return dumps, nil
 }
 
-func AddDump(filename string, fullpath string) error {
+func AddDump(program string, version string, filename string, buildTime string) error {
+	dump := Dump{
+		Program:  program,
+		Version:  version,
+		Filename: filename,
+		Build:    buildTime,
+	}
+	result := dbConn.Create(&dump)
+	if result.Error != nil {
+		logrus.Error("Insert record to table 'dumps' failed")
+		return result.Error
+	}
 	return nil
 }

@@ -12,6 +12,7 @@
     <db>./dumps.db</db>
     <dump>./dumps/</dump>
     <symbol>./symbols</symbol>
+    <exe>minidump_stackwalk</exe>
 
     <net>
         <view_ip>0.0.0.0</view_ip>

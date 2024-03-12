@@ -53,6 +53,7 @@ const defaultXmlConfig = `
     <db>./dumps.db</db>
     <dump>./dumps/</dump>
     <symbol>./symbols</symbol>
+    <exe>minidump_stackwalk</exe>
 
     <net>
         <mode>release</mode>
@@ -73,6 +74,7 @@ type relayConf struct {
 	DB         string  `xml:"db"`
 	DumpPath   string  `xml:"dump"`
 	SymbolPath string  `xml:"symbol"`
+	ExePath    string  `xml:"exe"`
 }
 
 type logConf struct {

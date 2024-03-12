@@ -47,7 +47,8 @@ import (
 var bpSvr *server.Server
 
 func initFunc() {
-	logrus.Info("")
+	svr := server.New()
+	svr.Start()
 }
 
 func uninitFunc() {
