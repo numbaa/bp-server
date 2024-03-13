@@ -55,7 +55,7 @@ static bool minidump_callback(
 
 5. Visit `http://your-host:17000/list/{page}`
 ```
-http://your-host:17001/list/0
+http://your-host:17000/list/0
 ```
 And you get
 | Program     |   Version   |  Build Time |  Crash Time |    Dump     |
