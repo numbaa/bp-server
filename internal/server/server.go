@@ -53,15 +53,35 @@ const listTemplate = `
 	<head>
 		<meta charset="UTF-8">
 		<title>Dumps</title>
+		<style>
+			th, td {
+				padding: 20px;
+			}
+		</style>
 	</head>
 	<body>
-		<ul>
+		<table>
+			<thead>
+				<tr>
+					<th>Program</th>
+					<th>Version</th>
+					<th>Build Time</th>
+					<th>Crash Time</th>
+					<th>Dump</th>
+				</tr>
+			</thead>
+		<tbody>
 		{{range . }}
-			<li>
-			{{ .Program }} {{ .Version }} Build: {{ .Build }} Crash: {{ .CreatedAt }} <a href="%s/view/ {{- .ID -}} "> {{ .Filename }} </a>
-			</li>
+			<tr>
+				<td>{{ .Program }}</td>
+				<td>{{ .Version }}</td>
+				<td>{{ .Build }}</td>
+				<td>{{ .CreatedAt }}</td>
+				<td><a href="%s/view/ {{- .ID -}} "> {{ .Filename }} </a></td>
+			</tr>
 		{{end}}
-		</ul>
+		</tbody>
+		</table>
 	</body>
 </html>`
 

@@ -3,7 +3,7 @@
 A naive [breakpad](https://chromium.googlesource.com/breakpad/breakpad) server.
 
 ## Usage
-1. Download from Github Release or build it yourself.
+1. Download from Github Releases or build it yourself.
 ```bash
 $> ./bp-server -c /path/to/bp-server.xml
 $> # or just
@@ -53,12 +53,17 @@ static bool minidump_callback(
 }
 ```
 
-5. Get dump list `http://your-host:17001/list/{page}`
+5. Visit `http://your-host:17001/list/{page}`
 ```
 http://your-host:17001/list/0
 ```
+And you get
+| Program     |   Version   |  Build Time |  Crash Time |    Dump     |
+| ----------- | ----------- | ----------- | ----------- | ----------- |
+| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 03:47:46.8633922| [12345678-1234-5678-9876-123456789abc.dmp]() |
+| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 10:31:12.6846541| [87654321-4321-8765-6789-cba987654321.dmp]() |
 
-6. Click the link on the page and you get something like this
+6. Click the dump links and you get something like this
 ```plaintext
 Operating system: Windows NT
                   10.0.22621 
