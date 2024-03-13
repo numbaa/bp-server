@@ -24,7 +24,7 @@ $> curl -X POST \
     -F "file=@./symbols/your-app.pdb/123123123123123/your-app.sym" \
     -F "entry=your-app.pdb" \
     -F "id=123123123123123" \
-    http://your-host:17000/upsym
+    http://your-host:17001/upsym
 ```
 
 5. Send dmp file when your program crash
@@ -48,12 +48,12 @@ static bool minidump_callback(
     std::wstring fullpath;
     fullpath = fullpath + dump_path + L"/" + minidump_id + L".dmp";
     files[L"file"] = fullpath;
-    google_breakpad::HTTPUpload::SendMultipartPostRequest(L"http://your-host:17000/updump", parameters, files, &timeout, &response_body, &response_code);
+    google_breakpad::HTTPUpload::SendMultipartPostRequest(L"http://your-host:17001/updump", parameters, files, &timeout, &response_body, &response_code);
     return false;
 }
 ```
 
-5. Visit `http://your-host:17001/list/{page}`
+5. Visit `http://your-host:17000/list/{page}`
 ```
 http://your-host:17001/list/0
 ```
