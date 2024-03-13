@@ -31,11 +31,11 @@ $> curl -X POST \
 ```c++
 static bool minidump_callback(
     const wchar_t* dump_path,
-	const wchar_t* minidump_id,
-	void* context,
-	EXCEPTION_POINTERS* exinfo,
-	MDRawAssertionInfo* assertion,
-	bool succeeded)
+    const wchar_t* minidump_id,
+    void* context,
+    EXCEPTION_POINTERS* exinfo,
+    MDRawAssertionInfo* assertion,
+    bool succeeded)
 {
     std::map<std::wstring, std::wstring> parameters;
     std::map<std::wstring, std::wstring> files;
@@ -49,7 +49,7 @@ static bool minidump_callback(
     fullpath = fullpath + dump_path + L"/" + minidump_id + L".dmp";
     files[L"file"] = fullpath;
     google_breakpad::HTTPUpload::SendMultipartPostRequest(L"http://your-host:17000/updump", parameters, files, &timeout, &response_body, &response_code);
-	return false;
+    return false;
 }
 ```
 
