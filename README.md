@@ -61,8 +61,8 @@ http://your-host:17000/list/0
 And you get
 |  ID |  OS | Program     |   Version   |  Build Time |  Crash Time |    Dump     |
 | --- | --- | ----------- | ----------- | ----------- | ----------- | ----------- |
-| 2 |Windows| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 03:47:46.8633922| [12345678-1234-5678-9876-123456789abc.dmp]() |
-| 1 |Windows| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 10:31:12.6846541| [87654321-4321-8765-6789-cba987654321.dmp]() |
+| 2 |Windows| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| Mar 16 2024 00:43:09| [12345678-1234-5678-9876-123456789abc.dmp]() |
+| 1 |Windows| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| Mar 14 2024 02:46:09| [87654321-4321-8765-6789-cba987654321.dmp]() |
 
 6. Click the dump links and you get something like this
 ```plaintext
