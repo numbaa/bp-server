@@ -55,7 +55,7 @@ const listTemplate = `
 		<title>Dumps</title>
 		<style>
 			th, td {
-				padding: 20px;
+				padding: 10px;
 			}
 		</style>
 	</head>
@@ -63,6 +63,8 @@ const listTemplate = `
 		<table>
 			<thead>
 				<tr>
+					<th>ID</th>
+					<th>OS</th>
 					<th>Program</th>
 					<th>Version</th>
 					<th>Build Time</th>
@@ -73,10 +75,12 @@ const listTemplate = `
 		<tbody>
 		{{range . }}
 			<tr>
+				<td>{{ .ID }}</td>
+				<td>{{ .OS }}</td>
 				<td>{{ .Program }}</td>
 				<td>{{ .Version }}</td>
 				<td>{{ .Build }}</td>
-				<td>{{ .CreatedAt }}</td>
+				<td>{{ .CreatedAt.Format "Jan 02 2006 15:04:05" }}</td>
 				<td><a href="%s/view/ {{- .ID -}} "> {{ .Filename }} </a></td>
 			</tr>
 		{{end}}
@@ -210,10 +214,11 @@ func (svr *Server) view(ctx *gin.Context) {
 }
 
 func (svr *Server) uploadDump(ctx *gin.Context) {
+	OS := ctx.PostForm("os")
 	buildTime := ctx.PostForm("build")
 	programName := ctx.PostForm("program")
 	version := ctx.PostForm("version")
-	if buildTime == "" || programName == "" || version == "" {
+	if buildTime == "" || programName == "" || version == "" || OS == "" {
 		logrus.Warn("Upload dump failed: invalid parameters")
 		ctx.String(http.StatusOK, "Upload dump failed: invalid parameters")
 		return
@@ -232,7 +237,7 @@ func (svr *Server) uploadDump(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "Save dump file to disk failed")
 		return
 	}
-	err = db.AddDump(programName, version, file.Filename, buildTime)
+	err = db.AddDump(OS, programName, version, file.Filename, buildTime)
 	if err != nil {
 		ctx.String(http.StatusOK, "Add meta info to database failed")
 		return

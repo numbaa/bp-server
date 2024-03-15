@@ -43,6 +43,7 @@ var dbConn *gorm.DB
 
 type Dump struct {
 	gorm.Model
+	OS       string
 	Program  string
 	Version  string
 	Filename string
@@ -65,7 +66,7 @@ func QueryDumpList(page int) ([]Dump, error) {
 		index = 0
 	}
 	var dumps []Dump
-	result := dbConn.Limit(kLimit).Offset(index).Find(&dumps)
+	result := dbConn.Order("id desc").Limit(kLimit).Offset(index).Find(&dumps)
 	if result.Error != nil {
 		logrus.Errorf("Query table 'dumps' with limit(%d) offset(%d) failed with: %v", kLimit, index, result.Error)
 		return nil, result.Error
@@ -73,8 +74,9 @@ func QueryDumpList(page int) ([]Dump, error) {
 	return dumps, nil
 }
 
-func AddDump(program string, version string, filename string, buildTime string) error {
+func AddDump(OS string, program string, version string, filename string, buildTime string) error {
 	dump := Dump{
+		OS:       OS,
 		Program:  program,
 		Version:  version,
 		Filename: filename,
