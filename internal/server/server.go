@@ -90,11 +90,12 @@ const listTemplate = `
 </html>`
 
 type Server struct {
-	tpl        *template.Template
-	router     *gin.Engine
-	stopedChan chan struct{}
-	httpView   *http.Server
-	httpUpload *http.Server
+	tpl          *template.Template
+	routerView   *gin.Engine
+	routerUpload *gin.Engine
+	stopedChan   chan struct{}
+	httpView     *http.Server
+	httpUpload   *http.Server
 }
 
 func toGinMode(mode string) string {
@@ -115,24 +116,25 @@ func New() *Server {
 		panic(err)
 	}
 	return &Server{
-		tpl:        tpl,
-		router:     gin.Default(),
-		stopedChan: make(chan struct{}, 2),
+		tpl:          tpl,
+		routerView:   gin.Default(),
+		routerUpload: gin.Default(),
+		stopedChan:   make(chan struct{}, 2),
 	}
 }
 
 func (svr *Server) Start() {
-	svr.router.GET("/list/:page", svr.list)
-	svr.router.GET("/view/:id", svr.view)
-	svr.router.POST("/updump", svr.uploadDump)
-	svr.router.POST("/upsym", svr.uploadSymbol)
+	svr.routerView.GET("/list/:page", svr.list)
+	svr.routerView.GET("/view/:id", svr.view)
+	svr.routerUpload.POST("/updump", svr.uploadDump)
+	svr.routerUpload.POST("/upsym", svr.uploadSymbol)
 	svr.httpUpload = &http.Server{
 		Addr:    conf.Xml.Net.UploadIP + ":" + fmt.Sprint(conf.Xml.Net.UploadPort),
-		Handler: svr.router,
+		Handler: svr.routerUpload,
 	}
 	svr.httpView = &http.Server{
 		Addr:    conf.Xml.Net.ViewIP + ":" + fmt.Sprint(conf.Xml.Net.ViewPort),
-		Handler: svr.router,
+		Handler: svr.routerView,
 	}
 	go func() {
 		if err := svr.httpUpload.ListenAndServe(); err != nil && err != http.ErrServerClosed {
