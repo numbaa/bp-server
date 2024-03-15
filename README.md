@@ -43,8 +43,9 @@ static bool minidump_callback(
     int response_code = 0;
     std::wstring response_body;
     parameters[L"build"] = L"" __DATE__ " " __TIME__;
-    parameters[L"program"] = "your-app.exe";
-    parameters[L"version"] = "v3.2.1";
+    parameters[L"os"] = L"Windows";
+    parameters[L"program"] = L"your-app.exe";
+    parameters[L"version"] = L"v3.2.1";
     std::wstring fullpath;
     fullpath = fullpath + dump_path + L"/" + minidump_id + L".dmp";
     files[L"file"] = fullpath;
@@ -58,10 +59,10 @@ static bool minidump_callback(
 http://your-host:17000/list/0
 ```
 And you get
-| Program     |   Version   |  Build Time |  Crash Time |    Dump     |
-| ----------- | ----------- | ----------- | ----------- | ----------- |
-| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 03:47:46.8633922| [12345678-1234-5678-9876-123456789abc.dmp]() |
-| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 10:31:12.6846541| [87654321-4321-8765-6789-cba987654321.dmp]() |
+|  ID |  OS | Program     |   Version   |  Build Time |  Crash Time |    Dump     |
+| --- | --- | ----------- | ----------- | ----------- | ----------- | ----------- |
+| 2 |Windows| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 03:47:46.8633922| [12345678-1234-5678-9876-123456789abc.dmp]() |
+| 1 |Windows| your-app.exe|   v3.2.1    |Mar 13 2024 02:16:47| 2024-03-13 10:31:12.6846541| [87654321-4321-8765-6789-cba987654321.dmp]() |
 
 6. Click the dump links and you get something like this
 ```plaintext
