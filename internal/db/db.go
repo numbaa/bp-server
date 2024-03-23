@@ -61,7 +61,7 @@ func init() {
 
 func QueryDumpList(page int) ([]Dump, error) {
 	const kLimit int = 20
-	index := kLimit * (page - 1)
+	index := kLimit * page
 	if index < 0 {
 		index = 0
 	}

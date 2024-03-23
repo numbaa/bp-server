@@ -179,6 +179,9 @@ func (svr *Server) list(ctx *gin.Context) {
 		ctx.String(http.StatusOK, "Parse GET parameter 'page' as integer failed")
 		return
 	}
+	if page < 0 {
+		page = 0
+	}
 	dumps, err := db.QueryDumpList(page)
 	if err != nil {
 		logrus.Error("QueryDumpList failed ", err)
